@@ -1,0 +1,266 @@
+//
+// Torque Game Engine game definition file (.fgd)
+//
+
+@SolidClass = worldspawn : "World entity"
+[
+  detail_number(integer) : "Map's detail index" : 0
+  min_pixels(integer) : "Minimum pixels for detail" : 250
+  geometry_scale(float) : "Geometry scale (must be power of 2)" : "32.0"
+  light_geometry_scale(float) : "Lighting scale (must be power of 2)" : "8.0"
+  light_smoothing_scale(float) : "Smooth lighting scale (must be power of 2)" : "4.0"
+  light_mesh_scale(float) : "Static mesh lighting scale (must be power of 2)" : "1.0"
+  ambient_color(color255) : "Ambient color" : "0 0 0"
+  emergency_ambient_color(color255) : "Emergency ambient color" : "0 0 0"
+]
+
+@BaseClass = spawnflags
+[
+  spawnflags(flags) =
+  [
+    1 : "Auto Start" : 1
+    2 : "Loop to end of frame" : 1
+    4 : "Flicker" : 0
+  ]
+]
+
+@BaseClass = speed
+[
+  speed(choices) : "Speed" : 2 =
+  [
+    0 : "Very slow"
+    1 : "Slow"
+    2 : "Normal"
+    3 : "Fast"
+    4 : "Very fast"
+  ]
+]
+
+@BaseClass = target_source
+[
+  name(target_source) : "Name"
+]
+
+@BaseClass = target_destination
+[
+  target(target_destination) : "Target"
+]
+
+@BaseClass = alarm
+[
+  alarm_type(choices) : "Alarm Type" : 0 =
+  [
+    0 : "Normal Only"
+    1 : "Alarm Only"
+    2 : "Both Alarm and Normal"
+  ]
+]
+
+@BaseClass model({ "path": "models/omnilight.mdl" }) color(255 255 255) = omni_light []
+
+@BaseClass model({ "path": "models/spotlight.mdl" }) color(255 255 255) = spot_light
+[
+  angles(string) : "Angles (X Y Z)" : "-90 0 0"
+]
+
+@PointClass base(alarm, omni_light) = light_omni : "Omnidirectional Light"
+[
+  color(color255) : "Color (R G B)" : "255 255 255"
+  falloff1(integer) : "Falloff1" : 100
+  falloff2(integer) : "Falloff2" : 200
+]
+
+@PointClass base(alarm, spot_light, target_destination) = light_spot : "Spot Light"
+[
+  color(color255) : "Color (R G B)" : "255 255 255"
+  falloff1(integer) : "Falloff1" : 10
+  falloff2(integer) : "Falloff2" : 100
+  distance1(integer) : "Inner Distance at Target" : 10
+  distance2(integer) : "Outer Distance at Target" : 100
+]
+
+@PointClass base(target_source) color(0 0 0) = target : "Target" []
+
+@PointClass base(alarm, spawnflags, target_source) color(255 255 255) = light : "Light"
+[
+  state0_duration(float) : "State 0 Duration" : "1.0"
+  state0_color(color255) : "State 0 Color (R G B)" : "1.0 1.0 1.0"
+]
+
+@PointClass base(omni_light, target_destination) = light_emitter_point : "Point emitter"
+[
+  state_index(integer) : "State index" : 0
+  falloff_type(choices) : "Falloff type" : 0 =
+  [
+    0 : "Distance"
+    1 : "Linear"
+  ]
+  falloff1(integer) : "Falloff1" : 10
+  falloff2(integer) : "Falloff2" : 100
+  falloff3(integer) : "Falloff3" : 0
+]
+
+@PointClass base(spot_light, target_destination) = light_emitter_spot : "Spot emitter"
+[
+  state_index(integer) : "State index" : 0
+  falloff_type(choices) : "Falloff type" : 0 =
+  [
+    1 : "Linear"
+    0 : "Distance"
+  ]
+  falloff1(integer) : "Falloff1" : 10
+  falloff2(integer) : "Falloff2" : 100
+  falloff3(integer) : "Falloff3" : 0
+  direction(string) : "Direction" : "0 0 -1"
+  theta(float) : "Inner angle" : "0.2"
+  phi(float) : "Outer angle" : "0.4"
+]
+
+@PointClass base(alarm, spawnflags, speed, omni_light, target_source) = light_strobe : "Strobe light"
+[
+  color1(color255) : "Color1 (R G B)" : "255 255 255"
+  color2(color255) : "Color2 (R G B)" : "0 0 0"
+  falloff1(integer) : "Falloff1" : 10
+  falloff2(integer) : "Falloff2" : 100
+]
+
+@PointClass base(alarm, spawnflags, speed, omni_light, target_source) = light_pulse : "Pulse light"
+[
+  color1(color255) : "Color1 (R G B)" : "255 255 255"
+  color2(color255) : "Color2 (R G B)" : "0 0 0"
+  falloff1(integer) : "Falloff1" : 10
+  falloff2(integer) : "Falloff2" : 100
+]
+
+@PointClass base(alarm, spawnflags, omni_light, target_source) = light_pulse2 : "Prog. pulse light"
+[
+  color1(color255) : "Color1 (R G B)" : "255 255 255"
+  color2(color255) : "Color2 (R G B)" : "0 0 0"
+  falloff1(integer) : "Falloff1" : 10
+  falloff2(integer) : "Falloff2" : 100
+  attack(float) : "Attack" : "1.0"
+  sustain1(float) : "Sustain1" : "1.0"
+  decay(float) : "Decay" : "1.0"
+  sustain2(float) : "Sustain2" : "1.0"
+]
+
+@PointClass base(alarm, spawnflags, speed, omni_light, target_source) = light_flicker : "Flicker light"
+[
+  color1(color255) : "Color1 (R G B)" : "255 255 255"
+  color2(color255) : "Color2 (R G B)" : "0 0 0"
+  color3(color255) : "Color3 (R G B)" : "0 0 0"
+  color4(color255) : "Color4 (R G B)" : "0 0 0"
+  color5(color255) : "Color5 (R G B)" : "0 0 0"
+  falloff1(integer) : "Falloff1" : 10
+  falloff2(integer) : "Falloff2" : 100
+]
+
+@PointClass base(alarm, omni_light, spawnflags, speed, target_source, target_destination) = light_runway : "Runway light"
+[
+  pingpong(choices) : "Ping pong?" : 0 =
+  [
+    0 : "No"
+    1 : "Yes"
+  ]
+  steps(integer) : "Steps" : 0
+  color(color255) : "Color (R G B)" : "255 255 255"
+  falloff1(integer) : "Falloff1" : 10
+  falloff2(integer) : "Falloff2" : 100
+]
+
+@PointClass color(0 255 0) = path_node : "Door path node"
+[
+  next_time(integer) : "ms to next node" : 1000
+  smoothing(integer) : "Smoothing type" : 0
+]
+
+@PointClass color(0 255 0) = path_start : "Path start (deprecated?)" []
+
+@PointClass base(target_source) color(0 255 0) = ai_special_node : "AI special node" []
+
+@PointClass model({ "path": "models/entity_mirror.mdl" }) color(0 255 255) = MirrorSurface : "Mirror Surface Entity"
+[
+  alpha_level(choices) : "Translucency" : 0 =
+  [
+    0 : "Fully Mirrored"
+    1 : "Barely There"
+    2 : "Very Translucent"
+    3 : "Half-and-Half"
+    4 : "Muddy Pond"
+    6 : "Use texture alpha channel"
+    5 : "Barely Reflective"
+  ]
+]
+
+@PointClass color(0 0 255) = game_entity : "Game Entity"
+[
+  game_class(string) : "Game class"
+  datablock(string) : "Datablock"
+]
+
+@SolidClass color(255 0 0) = trigger : "Trigger entity (cube)"
+[
+  name(string) : "Name" : "MustChange"
+  datablock(string) : "Datablock name"
+]
+
+@SolidClass = Door_Elevator : "Door or Elevator"
+[
+  name(string) : "Name" : "MustChange"
+  path_name(string) : "Path subscription"
+  datablock(string) : "Datablock name"
+  trigger0(string) : "The first trigger that will start this Door_Elevator entity moving" : "MyTrigger0"
+  trigger1(string) : "The second trigger that will start this Door_Elevator entity moving" : "MyTrigger1"
+  trigger2(string) : "The third trigger that will start this Door_Elevator entity moving" : "MyTrigger2"
+  trigger3(string) : "The fourth trigger that will start this Door_Elevator entity moving" : "MyTrigger3"
+  trigger4(string) : "The fifth trigger that will start this Door_Elevator entity moving" : "MyTrigger4"
+]
+
+@SolidClass = Force_Field : "Force field"
+[
+  name(string) : "Name" : "MustChange"
+  color(color255) : "Field color" : "125 216 232"
+  trigger0_name(string) : "Trigger 0"
+  trigger1_name(string) : "Trigger 1"
+  trigger2_name(string) : "Trigger 2"
+  trigger3_name(string) : "Trigger 3"
+  trigger4_name(string) : "Trigger 4"
+  trigger5_name(string) : "Trigger 5"
+  trigger6_name(string) : "Trigger 6"
+  trigger7_name(string) : "Trigger 7"
+]
+
+@SolidClass = detail : "Detail brush entity" []
+
+@SolidClass = collision : "Collision brush entity" []
+
+@SolidClass = vehicle_collision : "Vehicle collision brush entity" []
+
+@SolidClass color(255 0 255) = portal : "Portal brush entity"
+[
+  ambient_light(choices) : "Ambient light" : 0 =
+  [
+    0 : "Ambient light does not pass through"
+    1 : "Ambient light passes through"
+  ]
+]
+
+@SolidClass color(230 230 0) = PathedInteriorEntity : "A special solid type for use with the PathedInterior resource"
+[
+  name(string) : "Name of the PathedInteriorEntity - needed to match up with triggers" : "MyPathedInteriorEntity"
+  datablock(string) : "The datablock for this PathedInteriorEntity" : "MyPathedInteriorEntityDatablock"
+  path_name(string) : "The name of the path to attach this PathedInteriorEntity to" : "MyPath1"
+  trigger0(string) : "The first trigger that will start this PathedInteriorEntity moving" : "MyTrigger0"
+  trigger1(string) : "The second trigger that will start this PathedInteriorEntity moving"
+  trigger2(string) : "The third trigger that will start this PathedInteriorEntity moving"
+  trigger3(string) : "The fourth trigger that will start this PathedInteriorEntity moving"
+  trigger4(string) : "The fifth trigger that will start this PathedInteriorEntity moving"
+]
+
+@SolidClass color(255 255 0) = InteriorTrigger : "A special solid type for use with the PathedInterior resource"
+[
+  name(string) : "The name of this InteriorTrigger - needs to match up to the trigger property on the PathedInteriorEntity" : "MayInteriorTrigger1"
+  enter_node(integer) : "The time (ms) to move the PathedInteriorEntity along its path upon entering the trigger" : 2000
+  exit_node(integer) : "The time to move the PathedInteriorEntity along its path upon exiting the trigger" : 4000
+  datablock(string) : "The datablock for this InteriorTigger" : "MyInteriorTriggerDatablock"
+]
